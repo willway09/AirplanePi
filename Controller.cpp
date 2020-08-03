@@ -23,7 +23,7 @@ Controller::~Controller(){
     std::cout << "Controller deconstructed" << std::endl;
 }
 
-Controller::setChannels(unsigned int channels){
+void Controller::setChannels(unsigned int channels){
     if(channels!=4) this->channels = 3; //assures all other channel arguments default to 3 (easy), unless client wants 4 (hard)
     else this->channels = 4;
 }
