@@ -49,7 +49,7 @@ float Controller::getThrust(){
         case 4:
             thrust = sf::Joystick::getAxisPosition(0, sf::Joystick::V);
     }
-    if(thrust<20) return 0;
+    if(thrust<20 && thrust>-20) return 0;
     else return thrust/100;
 }
 
@@ -61,7 +61,7 @@ float Controller::getPitch(){
         case 4:
             pitch = sf::Joystick::getAxisPosition(0, sf::Joystick::Y);
     }
-    if(pitch<20) return 0;
+    if(pitch<20 && pitch>-20) return 0;
     else return pitch/100;
 }
 
@@ -73,7 +73,7 @@ float Controller::getRoll(){
         case 4:
             roll = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
     }
-    if(roll<20) return 0;
+    if(roll<20 && roll>-20) return 0;
     else return roll/100;
 }
 
@@ -87,7 +87,7 @@ float Controller::getYaw(){
         case 4:
             yaw = sf::Joystick::getAxisPosition(0, sf::Joystick::U);
     }
-    if(yaw<20) return 0;
+    if(yaw<20 && yaw>-20) return 0;
     else return yaw/100;
 }
 

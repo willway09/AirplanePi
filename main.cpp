@@ -9,13 +9,12 @@
 
 int main(){
     Controller xbox(3,0);
-
     float timeOut = 0.1;
     while(true){
-        std::cout << "Thrust: " << xbox.getThrust() << " ";
-        std::cout << "Pitch: " << xbox.getPitch() << " ";
-        std::cout << "Roll: " << xbox.getRoll() << " ";
-        std::cout << "Yaw: " << xbox.getYaw() << " " << std::endl;
+        std::cout << "Thrust: " << std::setw(9) << xbox.getThrust() << " ";
+        std::cout << "Pitch: " << std::setw(9) << xbox.getPitch() << " ";
+        std::cout << "Roll: " << std::setw(9) << xbox.getRoll() << " ";
+        std::cout << "Yaw: " << std::setw(9) << xbox.getYaw() << std::endl;
         usleep(timeOut*1000000);
     }
 }
