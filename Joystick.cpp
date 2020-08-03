@@ -32,6 +32,24 @@ void joysticks(){
     }
 }
 
+void counter(){
+    float timeOut = 0.05; //seconds
+    unsigned int c = 0; //counter
+    unsigned int d = 0;
+    while(true){
+        if(sf::Joystick::isButtonPressed(0,0)){
+            c++;
+        }
+        else d++;
+
+        if(d>20) c=0;
+
+        std::cout << c << std::endl;
+
+        usleep(timeOut*1000000);
+    }
+}
+
 void buttons(){
     float timeOut = 0.05; //seconds
     while(true){
@@ -55,7 +73,7 @@ int main() {
     if(sf::Joystick::isConnected(0)) {
         std::cout << "Connected" << std::endl;
 
-        buttons();
+        counter();
 
     }
     else{
