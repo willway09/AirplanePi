@@ -8,6 +8,7 @@
 #include <map>
 
 Controller::Controller(unsigned int port){
+    this->port = port;
     sf::Joystick::update();
     if(sf::Joystick::isConnected(port)) {
         std::cout << "Connected" << std::endl;
@@ -23,7 +24,15 @@ Controller::~Controller(){
 
 bool Controller::getA(){
     sf::Joystick::update();
-    if(sf::Joystick::isButtonPressed(0,0)){
+    if(sf::Joystick::isButtonPressed(this->port,0)){
+        return true;
+    }
+    else return false;
+}
+
+bool Controller::getB(){
+    sf::Joystick::update();
+    if(sf::Joystick::isButtonPressed(this->port,1)){
         return true;
     }
     else return false;
