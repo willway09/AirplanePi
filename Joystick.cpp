@@ -45,7 +45,7 @@ void counter(){
             d=0;
         }
 
-        std::cout << c << std::endl;
+        std::cout << "Counter: " << c << std::endl;
 
         usleep(timeOut*1000000);
     }
