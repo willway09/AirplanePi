@@ -15,10 +15,10 @@ int main() {
         std::string axis = sf::Joystick::hasAxis(0, sf::Joystick::X) ? "yes" : "no";
         std::cout << "Controller axis: " << axis << std::endl;
 
-        unsigned float timeOut = 0.05; //seconds
+        float timeOut = 0.05; //seconds
         while(true){
             for(int x=0;x<32;x++){
-                if(std::isButtonPressed(0,x)){
+                if(sf::Joystick::isButtonPressed(0,x)){
                     std::cout << x << "  ";
                 }
             }
