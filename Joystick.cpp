@@ -9,7 +9,7 @@ float timeOut = 0.5;
 
 void generateButtonMap(){
     std::string buttonName[11] = {"A","B","X","Y","LB","RB","MENU","START","XBOX","LSB","RSB"};
-    for(int x=0; x<10; x++){
+    for(int x=0; x<11; x++){
         buttonMap.insert(std::pair<int,std::string>(x,buttonName[x]));
     }
 }
@@ -66,7 +66,7 @@ void buttons(){
         for(int x=0;x<32;x++){
             sf::Joystick::update();
             if(sf::Joystick::isButtonPressed(0,x)){
-                std::cout << buttonMap[x] << " " << x;
+                std::cout << buttonMap[x] << " ";
             }
         }
         std::cout << std::endl;
