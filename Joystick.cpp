@@ -33,7 +33,7 @@ void joysticks(){
 }
 
 void buttons(){
-    float timeOut = 0.5; //seconds
+    float timeOut = 0.05; //seconds
     while(true){
         std::cout << "ran: ";
         for(int x=0;x<32;x++){
