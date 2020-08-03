@@ -90,7 +90,7 @@ int main() {
 
         generateButtonMap();
         setTimeOut();
-        buttons();
+        joysticks();
 
     }
     else{

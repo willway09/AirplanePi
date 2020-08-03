@@ -1,8 +1,9 @@
+//run this: g++ -o main main.cpp Controller.cpp -lsfml-window
+
 #include "SFML/Window/Joystick.hpp"
 #include <iostream>
 #include <string>
 #include <unistd.h>
-#include <map>
 
 #include "Controller.hpp"
 
