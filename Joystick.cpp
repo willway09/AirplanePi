@@ -62,11 +62,11 @@ void counter(){
 
 void buttons(){
     while(true){
-        std::cout << "ran: ";
+        std::cout << "";
         for(int x=0;x<32;x++){
             sf::Joystick::update();
             if(sf::Joystick::isButtonPressed(0,x)){
-                std::cout << "SUCSESS AT: " << x;
+                std::cout << buttonMap[x] << " " << x;
             }
         }
         std::cout << std::endl;
