@@ -17,6 +17,7 @@ int main() {
 
         float timeOut = 0.05; //seconds
         while(true){
+            sf::Joystick::update();
             for(int x=0;x<32;x++){
                 if(sf::Joystick::isButtonPressed(0,x)){
                     std::cout << x << "  ";
