@@ -27,10 +27,10 @@ int main() {
             float v = sf::Joystick::getAxisPosition(0, sf::Joystick::V);
             float povx = sf::Joystick::getAxisPosition(0, sf::Joystick::PovX);
             float povy = sf::Joystick::getAxisPosition(0, sf::Joystick::PovY);
-            std::cout << "x: " << std::setw(6) << x << std::setw(6) << " y: " << std::setw(6) << y << std::setw(6) << " ";
-            std::cout << "z: " << std::setw(6) << z << std::setw(6) << " r: " << std::setw(6) << r << std::setw(6) << " ";
-            std::cout << "u: " << std::setw(6) << u << std::setw(6) << " v: " << std::setw(6) << v << std::setw(6) << " ";
-            std::cout << "povx: " << std::setw(6) << povx << std::setw(6) << " povy: " << std::setw(6) << povy << std::setw(6) << std::endl;
+            std::cout << "x: " << "\t" << x << "\t" << " y: " << "\t" << y << "\t" << " ";
+            std::cout << "z: " << "\t" << z << "\t" << " r: " << "\t" << r << "\t" << " ";
+            std::cout << "u: " << "\t" << u << "\t" << " v: " << "\t" << v << "\t" << " ";
+            std::cout << "povx: " << "\t" << povx << "\t" << " povy: " << "\t" << povy << "\t" << std::endl;
 
             usleep(timeOut*1000000);
         }
