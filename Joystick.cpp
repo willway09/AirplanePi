@@ -37,7 +37,6 @@ void buttons(){
     while(true){
         std::cout << "ran: ";
         for(int x=0;x<32;x++){
-            std::cout << x << " ";
             sf::Joystick::update();
             if(sf::Joystick::isButtonPressed(0,x)){
                 std::cout << "SUCSESS AT: " << x;
