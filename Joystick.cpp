@@ -3,6 +3,7 @@
 #include <string>
 #include <unistd.h>
 
+
 int main() {
 
     sf::Joystick::update();
@@ -15,14 +16,22 @@ int main() {
         std::string axis = sf::Joystick::hasAxis(0, sf::Joystick::X) ? "yes" : "no";
         std::cout << "Controller axis: " << axis << std::endl;
 
-        float timeOut = 0.05; //seconds
+        float timeOut = 0.5; //seconds
         while(true){
-            for(int x=0;x<32;x++){
-                sf::Joystick::update();
-                if(sf::Joystick::isButtonPressed(0,x)){
-                    std::cout << x << "  ";
-                }
-            }
+            sf::Joystick::update();
+            float x = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
+            float y = sf::Joystick::getAxisPosition(0, sf::Joystick::Y);
+            float z = sf::Joystick::getAxisPosition(0, sf::Joystick::Z);
+            float r = sf::Joystick::getAxisPosition(0, sf::Joystick::R);
+            float u = sf::Joystick::getAxisPosition(0, sf::Joystick::U);
+            float v = sf::Joystick::getAxisPosition(0, sf::Joystick::V);
+            float povx = sf::Joystick::getAxisPosition(0, sf::Joystick::PovX);
+            float povy = sf::Joystick::getAxisPosition(0, sf::Joystick::PovY);
+            std::cout << "x: " << std::setw(6) << x << std::setw(6) << " y: " << std::setw(6) << y << std::setw(6) << " ";
+            std::cout << "z: " << std::setw(6) << z << std::setw(6) << " r: " << std::setw(6) << r << std::setw(6) << " ";
+            std::cout << "u: " << std::setw(6) << u << std::setw(6) << " v: " << std::setw(6) << v << std::setw(6) << " ";
+            std::cout << "povx: " << std::setw(6) << povx << std::setw(6) << " povy: " << std::setw(6) << povy << std::setw(6) << std::endl;
+
             usleep(timeOut*1000000);
         }
     }
@@ -31,16 +40,9 @@ int main() {
     }
 }
 
-/*sf::Joystick::update();
-float x = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
-float y = sf::Joystick::getAxisPosition(0, sf::Joystick::Y);
-float z = sf::Joystick::getAxisPosition(0, sf::Joystick::Z);
-float r = sf::Joystick::getAxisPosition(0, sf::Joystick::R);
-float u = sf::Joystick::getAxisPosition(0, sf::Joystick::U);
-float v = sf::Joystick::getAxisPosition(0, sf::Joystick::V);
-float povx = sf::Joystick::getAxisPosition(0, sf::Joystick::PovX);
-float povy = sf::Joystick::getAxisPosition(0, sf::Joystick::PovY);
-std::cout << "x: " << x << " y: " << y << " ";
-std::cout << "z: " << z << " r: " << r << " ";
-std::cout << "u: " << u << " v: " << v << " ";
-std::cout << "povx: " << povx << " povy: " << povy << std::endl;*/
+/*for(int x=0;x<32;x++){
+    sf::Joystick::update();
+    if(sf::Joystick::isButtonPressed(0,x)){
+        std::cout << x << "  ";
+    }
+}*/
