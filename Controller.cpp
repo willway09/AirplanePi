@@ -32,7 +32,7 @@ bool Controller::getButton(std::string buttonString){
     for(int x=0;x<Controller::buttonName.length;x++){
         if(buttonName[x].equals(buttonString)){
             sf::Joystick::update();
-            if(sf::Joystick::isButtonPressed(this->port,buttonNumber)) return true;
+            if(sf::Joystick::isButtonPressed(this->port,buttonString)) return true;
             else return false;
         }
     }
