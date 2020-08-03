@@ -78,7 +78,7 @@ int main() {
 
     }
     else{
-        std::cout << "Connection failed you dipshit" << std::endl;
+        std::cout << "Connection failed you silly" << std::endl;
     }
 }
 
