@@ -10,13 +10,10 @@ Controller::Controller(unsigned int channels, unsigned int port){
     else this->channels = 4;
     if(port>8) this->port = 0; //assures invalid port arguments default to 0
     else this->port = port;
+
     sf::Joystick::update();
-    if(sf::Joystick::isConnected(port)) {
-        std::cout << "Connection succeeded" << std::endl;
-    }
-    else{
-        std::cout << "Connection failed you silly" << std::endl;
-    }
+    if(sf::Joystick::isConnected(port)) std::cout << "Connection succeeded" << std::endl;
+    else std::cout << "Connection failed you silly" << std::endl;
 }
 
 Controller::~Controller(){
