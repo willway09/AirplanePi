@@ -35,12 +35,16 @@ void joysticks(){
 void buttons(){
     float timeOut = 0.5; //seconds
     while(true){
+        std::cout << "ran: ";
         for(int x=0;x<32;x++){
+            std::cout << x << " ";
             sf::Joystick::update();
             if(sf::Joystick::isButtonPressed(0,x)){
-                std::cout << x << "  ";
+                std::cout << "SUCSESS AT: " << x;
             }
         }
+        std::cout << std::endl;
+
         usleep(timeOut*1000000);
     }
 }
