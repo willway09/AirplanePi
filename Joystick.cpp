@@ -15,7 +15,7 @@ void generateButtonMap(){
 }
 
 void setTimeOut(){
-    std::cout << "Set Time Out: "
+    std::cout << "Set Time Out: ";
     std::cin >> timeOut;
     std::cout << std::endl;
 }
