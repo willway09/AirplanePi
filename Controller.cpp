@@ -43,6 +43,7 @@ bool Controller::getButton(std::string buttonString){
 
 float Controller::getThrust(){
     float thrust = 0;
+    sf::Joystick::update();
     switch(channels){
         case 3:
         case 4:
@@ -54,6 +55,7 @@ float Controller::getThrust(){
 
 float Controller::getPitch(){
     float pitch = 0;
+    sf::Joystick::update();
     switch(channels){
         case 3:
         case 4:
@@ -65,6 +67,7 @@ float Controller::getPitch(){
 
 float Controller::getRoll(){
     float roll = 0;
+    sf::Joystick::update();
     switch(channels){
         case 3:
         case 4:
@@ -77,6 +80,7 @@ float Controller::getRoll(){
 
 float Controller::getYaw(){
     float yaw = 0;
+    sf::Joystick::update();
     switch(channels){
         case 3:
             yaw = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
