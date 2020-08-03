@@ -14,6 +14,12 @@ void generateButtonMap(){
     }
 }
 
+void setTimeOut(){
+    std::cout << "Set Time Out: "
+    std::cin >> timeOut;
+    std::cout << std::endl;
+}
+
 void initialization(){
     unsigned int buttonCount = sf::Joystick::getButtonCount(0);
     std::cout << buttonCount << std::endl;
@@ -83,6 +89,7 @@ int main() {
         std::cout << "Connected" << std::endl;
 
         generateButtonMap();
+        setTimeOut();
         buttons();
 
     }
