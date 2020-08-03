@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <map>
 
-map<int, int> buttonMap;
+map<int, std::string> buttonMap;
 float timeOut = 0.5;
 
 void generateButtonMap(){
