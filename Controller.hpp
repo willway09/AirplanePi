@@ -5,6 +5,8 @@ class Controller{
         Controller(unsigned int channels = 3, unsigned int port = 0); //constructor input channels and port number (default 3 and 0)
         ~Controller(); //deconstructor
 
+        void setChannels(unsigned int channels); //mutator for channels
+
         bool getButton(unsigned int buttonNumber); //input button ID, returns whether it's pressed or not
         bool getButton(std::string buttonString); //input button name, returns whether it's pressed or not
 
