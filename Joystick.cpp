@@ -8,7 +8,7 @@ std::map<int, std::string> buttonMap;
 float timeOut = 0.5;
 
 void generateButtonMap(){
-  buttonMap.insert(std::pair<int,std::string>(0,std::string("A"));
+  buttonMap.insert(std::pair<int,std::string>(0,std::string("A")));
 }
 
 void initialization(){
