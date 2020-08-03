@@ -2,7 +2,7 @@
 
 class Controller{
     public:
-        Controller(unsigned int port); //constructor input port number (default 0)
+        Controller(unsigned int channels = 3, unsigned int port = 0); //constructor input channels and port number (default 3 and 0)
         ~Controller(); //deconstructor
 
         bool getButton(unsigned int buttonNumber); //input button ID, returns whether it's pressed or not

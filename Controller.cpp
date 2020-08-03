@@ -5,7 +5,8 @@
 #include <string>
 
 
-Controller::Controller(unsigned int port){
+Controller::Controller(unsigned int channels, unsigned int port){
+    this->channels = channels;
     this->port = port;
     sf::Joystick::update();
     if(sf::Joystick::isConnected(port)) {
