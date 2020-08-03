@@ -2,6 +2,14 @@
 #include <iostream>
 #include <string>
 #include <unistd.h>
+#include <map>
+
+map<int, int> buttonMap;
+float timeOut = 0.5;
+
+void generateButtonMap(){
+  buttonMap.insert(pair<int,std::string>(0,std::string("A"));
+}
 
 void initialization(){
     unsigned int buttonCount = sf::Joystick::getButtonCount(0);
@@ -12,7 +20,6 @@ void initialization(){
 }
 
 void joysticks(){
-    float timeOut = 0.5; //seconds
     while(true){
         sf::Joystick::update();
         float x = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
@@ -33,7 +40,6 @@ void joysticks(){
 }
 
 void counter(){
-    float timeOut = 0.05; //seconds
     unsigned int c = 0; //counter
     unsigned int d = 0; //cooldown
     while(true){
@@ -52,7 +58,6 @@ void counter(){
 }
 
 void buttons(){
-    float timeOut = 0.05; //seconds
     while(true){
         std::cout << "ran: ";
         for(int x=0;x<32;x++){
@@ -74,7 +79,8 @@ int main() {
     if(sf::Joystick::isConnected(0)) {
         std::cout << "Connected" << std::endl;
 
-        counter();
+        generateButtonMap();
+        buttons();
 
     }
     else{
