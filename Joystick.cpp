@@ -35,14 +35,15 @@ void joysticks(){
 void counter(){
     float timeOut = 0.05; //seconds
     unsigned int c = 0; //counter
-    unsigned int d = 0;
+    unsigned int d = 0; //cooldown
     while(true){
-        if(sf::Joystick::isButtonPressed(0,0)){
-            c++;
-        }
+        if(sf::Joystick::isButtonPressed(0,0)) c++;
         else d++;
 
-        if(d>20) c=0;
+        if(d>20){
+            c=0;
+            d=0;
+        }
 
         std::cout << c << std::endl;
 
