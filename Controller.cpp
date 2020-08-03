@@ -22,18 +22,42 @@ Controller::~Controller(){
     std::cout << "Controller deconstructed" << std::endl;
 }
 
-bool Controller::getA(){
+bool Controller::getButton(unsigned int buttonNumber){
     sf::Joystick::update();
-    if(sf::Joystick::isButtonPressed(this->port,0)){
-        return true;
-    }
+    if(sf::Joystick::isButtonPressed(this->port,buttonNumber)) return true;
     else return false;
 }
 
-bool Controller::getB(){
-    sf::Joystick::update();
-    if(sf::Joystick::isButtonPressed(this->port,1)){
-        return true;
+bool Controller::getButton(std::string buttonString){
+    for(int x=0;x<Controller::buttonName.length;x++){
+        if(buttonName[x].equals(buttonString)){
+            sf::Joystick::update();
+            if(sf::Joystick::isButtonPressed(this->port,buttonNumber)) return true;
+            else return false;
+        }
     }
-    else return false;
+}
+
+float Controller::getThrust(){
+    float thrust = sf::Joystick::getAxisPosition(0, sf::Joystick::V);
+    if(thrust<20) return 0;
+    else return thurst/100;
+}
+
+float Controller::getRoll(){
+    float roll = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
+    if(roll<20) return 0;
+    else return roll/100;
+}
+
+float Controller::getPitch(){
+    float pitch = sf::Joystick::getAxisPosition(0, sf::Joystick::Y);
+    if(pitch<20) return 0;
+    else return pitch/100;
+}
+
+float Controller::getyaw(){
+    float yaw = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
+    if(yaw<20) return 0;
+    else return yaw/100;
 }
