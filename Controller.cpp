@@ -33,9 +33,9 @@ bool Controller::getButton(std::string buttonString){
         if(buttonName[x].compare(std::string(buttonString)) == 0){
             sf::Joystick::update();
             if(sf::Joystick::isButtonPressed(this->port,x)) return true;
-            else return false;
         }
     }
+    return false;
 }
 
 float Controller::getThrust(){
