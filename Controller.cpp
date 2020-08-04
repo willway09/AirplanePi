@@ -4,14 +4,13 @@
 #include <iostream>
 #include <string>
 
+const std::string Controller::buttonName[] = {"A","B","X","Y","LB","RB","MENU","START","XBOX","LSB","RSB"};
 
 Controller::Controller(unsigned int channels, unsigned int port){
     if(channels!=4) this->channels = 3; //assures all other channel arguments default to 3 (easy), unless client wants 4 (hard)
     else this->channels = 4;
     if(port>8) this->port = 0; //assures invalid port arguments default to 0
     else this->port = port;
-
-    
 
     sf::Joystick::update();
     if(sf::Joystick::isConnected(port)) std::cout << "Connection succeeded" << std::endl;
