@@ -9,7 +9,7 @@
 #include "Controller.hpp"
 
 int main(){
-    Controller xbox(3,0);
+    Controller xbox(4,0);
     float timeOut = 0.1;
     while(true){
         std::cout << "Thrust: " << std::setw(9) << xbox.getThrust() << " ";
