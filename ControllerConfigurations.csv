@@ -1,0 +1,12 @@
+Mode,Channels,Inverted,Trigger,Name
+0,3,,,Default
+1,4,,,4 Channel
+2,3,x,,Inverted
+3,4,x,,Inverted 4 Channel
+4,3,,R,Trigger Thrust
+5,4,,R,4 Channel Trigger Thrust
+6,3,x,L,Inverted Trigger Thrust
+7,4,x,L,Inverted 4 Channel Trigger Thrust
+,,,,
+8,3,N/A,L,Left Handed Mode
+9,3,N/A,R,Right Handed Mode
