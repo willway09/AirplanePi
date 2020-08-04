@@ -48,7 +48,9 @@ float Controller::getThrust(){
         case 3:
         case 4:
             thrust = sf::Joystick::getAxisPosition(0, sf::Joystick::V);
+            break;
     }
+    thrust-=(2*thrust); //thrust values need to be reversed because of how SFML is designed
     if(thrust<20 && thrust>-20) return 0;
     else return thrust/100;
 }
@@ -60,6 +62,7 @@ float Controller::getPitch(){
         case 3:
         case 4:
             pitch = sf::Joystick::getAxisPosition(0, sf::Joystick::Y);
+            break;
     }
     if(pitch<20 && pitch>-20) return 0;
     else return pitch/100;
@@ -72,6 +75,7 @@ float Controller::getRoll(){
         case 3:
         case 4:
             roll = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
+            break;
     }
     if(roll<20 && roll>-20) return 0;
     else return roll/100;
@@ -84,8 +88,10 @@ float Controller::getYaw(){
     switch(channels){
         case 3:
             yaw = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
+            break;
         case 4:
             yaw = sf::Joystick::getAxisPosition(0, sf::Joystick::U);
+            break;
     }
     if(yaw<20 && yaw>-20) return 0;
     else return yaw/100;
