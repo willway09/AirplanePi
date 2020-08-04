@@ -6,11 +6,9 @@
 
 const std::string Controller::buttonName[] = {"A","B","X","Y","LB","RB","MENU","START","XBOX","LSB","RSB"};
 
-Controller::Controller(unsigned int channels, unsigned int port){
-    if(channels!=4) this->channels = 3; //assures all other channel arguments default to 3 (easy), unless client wants 4 (hard)
-    else this->channels = 4;
-    if(port>8) this->port = 0; //assures invalid port arguments default to 0
-    else this->port = port;
+Controller::Controller(unsigned int mode, unsigned int port){
+    this->setMode(mode);
+    this->setPort(port);
 
     sf::Joystick::update();
     if(sf::Joystick::isConnected(port)) std::cout << "Connection succeeded" << std::endl;
@@ -21,9 +19,14 @@ Controller::~Controller(){
     std::cout << "Controller deconstructed" << std::endl;
 }
 
-void Controller::setChannels(unsigned int channels){
-    if(channels!=4) this->channels = 3; //assures all other channel arguments default to 3 (easy), unless client wants 4 (hard)
-    else this->channels = 4;
+void Controller::setMode(unsigned int mode){
+    if(mode>9) this->mode = 0; //assures all other channel arguments default to 0
+    else this->mode = mode;
+}
+
+void Controller::setPort(unsigned int port){
+    if(port>8) this->port = 0; //assures invalid port arguments default to 0
+    else this->port = port;
 }
 
 bool Controller::getButton(unsigned int buttonNumber){
@@ -45,57 +48,114 @@ bool Controller::getButton(std::string buttonString){
 float Controller::getThrust(){
     float thrust = 0;
     sf::Joystick::update();
-    switch(channels){
-        case 3:
-        case 4:
+    switch(mode){
+        case 0:
+        case 1:
             thrust = sf::Joystick::getAxisPosition(0, sf::Joystick::V);
-            break;
+            thrust-=(2*thrust); //thrust values need to be reversed because of how SFML is designed
+            if(thrust<20) return 0; //cannot have negative thrust
+            else return thrust/100;
+        case 2:
+        case 3:
+            thrust = sf::Joystick::getAxisPosition(0, sf::Joystick::Y);
+            thrust-=(2*thrust); //thrust values need to be reversed because of how SFML is designed
+            if(thrust<20) return 0; //cannot have negative thrust
+            else return thrust/100;
+        case 4:
+        case 5:
+        case 9:
+            thrust = sf::Joystick::getAxisPosition(0, sf::Joystick::R);
+            return (thrust+=100)/200; //thrust values from the trigger range [-100,100] because of how SFML is designed... need to be from [0,200] then [0,100]
+        case 6:
+        case 7:
+        case 8:
+            thrust = sf::Joystick::getAxisPosition(0, sf::Joystick::Z);
+            return (thrust+=100)/200; //thrust values from the trigger range [-100,100] because of how SFML is designed... need to be from [0,200] then [0,100]
+        default:
+            std::cout << "Error: thrust" << std::endl;
+            return 0;
     }
-    thrust-=(2*thrust); //thrust values need to be reversed because of how SFML is designed
-    if(thrust<20) return 0; //cannot have negative thrust
-    else return thrust/100;
 }
 
 float Controller::getPitch(){
     float pitch = 0;
     sf::Joystick::update();
-    switch(channels){
-        case 3:
+    switch(mode){
+        case 0:
+        case 1:
         case 4:
+        case 5:
+        case 8:
             pitch = sf::Joystick::getAxisPosition(0, sf::Joystick::Y);
-            break;
+            if(pitch<20 && pitch>-20) return 0;
+            else return pitch/100;
+        case 2:
+        case 3:
+        case 6:
+        case 7:
+        case 9:
+            pitch = sf::Joystick::getAxisPosition(0, sf::Joystick::V);
+            if(pitch<20 && pitch>-20) return 0;
+            else return pitch/100;
+        default:
+            std::cout << "Error: pitch" << std::endl;
+            return 0;
     }
-    if(pitch<20 && pitch>-20) return 0;
-    else return pitch/100;
 }
 
 float Controller::getRoll(){
     float roll = 0;
     sf::Joystick::update();
-    switch(channels){
-        case 3:
+    switch(mode){
+        case 0:
+        case 1:
         case 4:
+        case 5:
+        case 8:
             roll = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
-            break;
+            if(roll<20 && roll>-20) return 0;
+            else return roll/100;
+        case 2:
+        case 3:
+        case 6:
+        case 7:
+        case 9:
+            roll = sf::Joystick::getAxisPosition(0, sf::Joystick::U);
+            if(roll<20 && roll>-20) return 0;
+            else return roll/100;
+        default:
+            std::cout << "Error: roll" << std::endl;
+            return 0;
     }
-    if(roll<20 && roll>-20) return 0;
-    else return roll/100;
+
 }
 
 
 float Controller::getYaw(){
     float yaw = 0;
     sf::Joystick::update();
-    switch(channels){
+    switch(mode){
+        case 0:
         case 3:
-            yaw = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
-            break;
         case 4:
+        case 7:
+        case 8:
+            yaw = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
+            if(yaw<20 && yaw>-20) return 0;
+            else return yaw/100;
+        case 1:
+        case 2:
+        case 5:
+        case 6:
+        case 9:
             yaw = sf::Joystick::getAxisPosition(0, sf::Joystick::U);
-            break;
+            if(yaw<20 && yaw>-20) return 0;
+            else return yaw/100;
+        default:
+            std::cout << "Error: yaw" << std::endl;
+            return 0;
     }
-    if(yaw<20 && yaw>-20) return 0;
-    else return yaw/100;
+
 }
 
 float Controller::getMotor(){
