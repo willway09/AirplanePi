@@ -51,7 +51,7 @@ float Controller::getThrust(){
             break;
     }
     thrust-=(2*thrust); //thrust values need to be reversed because of how SFML is designed
-    if(thrust<20 && thrust>-20) return 0;
+    if(thrust<20) return 0; //cannot have negative thrust
     else return thrust/100;
 }
 
