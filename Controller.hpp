@@ -23,5 +23,5 @@ class Controller{
     private:
         unsigned int port;
         unsigned int channels;
-        static std::string buttonName[11] = {"A","B","X","Y","LB","RB","MENU","START","XBOX","LSB","RSB"};
+        static const std::string buttonName[11] = {"A","B","X","Y","LB","RB","MENU","START","XBOX","LSB","RSB"};
 };
