@@ -2,10 +2,11 @@
 
 class Controller{
     public:
-        Controller(unsigned int channels = 3, unsigned int port = 0); //constructor input channels and port number (default 3 and 0)
+        Controller(unsigned int mode = 3, unsigned int port = 0); //constructor input mode and port number (default 3 and 0)
         ~Controller(); //deconstructor
 
-        void setChannels(unsigned int channels); //mutator for channels
+        void setMode(unsigned int mode); //mutator for mode
+        void setPort(unsigned int port); //mutator for port
 
         bool getButton(unsigned int buttonNumber); //input button ID, returns whether it's pressed or not
         bool getButton(std::string buttonString); //input button name, returns whether it's pressed or not
@@ -22,6 +23,6 @@ class Controller{
 
     private:
         unsigned int port;
-        unsigned int channels;
+        unsigned int mode;
         static const std::string buttonName[11];
 };
