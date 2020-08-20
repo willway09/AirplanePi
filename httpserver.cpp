@@ -18,14 +18,31 @@
 #include <unordered_map>
 #include <fstream>
 
+//Controller headers
+#include <Controller.hpp>
+
 //Structs for sharing groups of values between main() and threads
 struct Axes{
+	Controller* controller = nullptr;
 	float thrust = 0;
 	float pitch = 0;
 	float roll = 0;
 	float yaw = 0;
 	pthread_mutex_t axesControlMutex = PTHREAD_MUTEX_INITIALIZER;
 };
+
+void* updateController(void* data){
+	Axes* axes = (Axes*)data;
+	while(true){
+		pthread_mutex_lock(*(axes->axesControlMutex));
+		axes.thrust = axes->controller.getThrust();
+		axes.pitch = axes->controller.getPitch();
+		axes.roll = axes->controller.getRoll();
+		axes.yaw = axes->controller.getYaw();
+		pthread_mutex_unlock(*(axes->axesControlMutex));
+		usleep(1000);
+	}
+}
 
 struct ValuesContainer{
 	struct Axes* axes;
@@ -201,7 +218,13 @@ std::string evaluateRequest(std::string file, std::unordered_map<std::string, st
 int main() {
 
 	struct Axes axes;
+		Controller controller(0,0);
+		axes->controller = &controller;
 	struct ValuesContainer valuesContainer = { &axes };
+
+	//Create thread for controller reading
+	pthread_t controllerTid;
+	pthread_create(&controllerTid, NULL, updateController, &axes);
 
 	//Declare variables for sockets
 	unsigned int s;

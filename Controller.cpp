@@ -13,9 +13,6 @@ Controller::Controller(unsigned int mode, unsigned int port){
     sf::Joystick::update();
     if(sf::Joystick::isConnected(port)) std::cout << "Connection succeeded" << std::endl;
     else std::cout << "Connection failed you silly" << std::endl;
-    std::cout << "Port: " << this->port << std::endl;
-    std::cout << "Mode: " << this->mode << std::endl;
-    std::cout << "Connection succeeded" << std::endl;
 }
 
 Controller::~Controller(){
@@ -83,7 +80,7 @@ float Controller::getThrust(){
                 return 0;
         }
     }
-    
+
 }
 
 float Controller::getPitch(){
