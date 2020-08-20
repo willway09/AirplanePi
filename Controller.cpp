@@ -13,6 +13,9 @@ Controller::Controller(unsigned int mode, unsigned int port){
     sf::Joystick::update();
     if(sf::Joystick::isConnected(port)) std::cout << "Connection succeeded" << std::endl;
     else std::cout << "Connection failed you silly" << std::endl;
+    std::cout << "Port: " << this->port << std::endl;
+    std::cout << "Mode: " << this->mode << std::endl;
+    std::cout << "Connection succeeded" << std::endl;
 }
 
 Controller::~Controller(){
@@ -51,25 +54,25 @@ float Controller::getThrust(){
     switch(mode){
         case 0:
         case 1:
-            thrust = sf::Joystick::getAxisPosition(0, sf::Joystick::V);
+            thrust = sf::Joystick::getAxisPosition(this->port, sf::Joystick::V);
             thrust-=(2*thrust); //thrust values need to be reversed because of how SFML is designed
             if(thrust<20) return 0; //cannot have negative thrust
             else return thrust/100;
         case 2:
         case 3:
-            thrust = sf::Joystick::getAxisPosition(0, sf::Joystick::Y);
+            thrust = sf::Joystick::getAxisPosition(this->port, sf::Joystick::Y);
             thrust-=(2*thrust); //thrust values need to be reversed because of how SFML is designed
             if(thrust<20) return 0; //cannot have negative thrust
             else return thrust/100;
         case 4:
         case 5:
         case 9:
-            thrust = sf::Joystick::getAxisPosition(0, sf::Joystick::R);
+            thrust = sf::Joystick::getAxisPosition(this->port, sf::Joystick::R);
             return (thrust+=100)/200; //thrust values from the trigger range [-100,100] because of how SFML is designed... need to be from [0,200] then [0,100]
         case 6:
         case 7:
         case 8:
-            thrust = sf::Joystick::getAxisPosition(0, sf::Joystick::Z);
+            thrust = sf::Joystick::getAxisPosition(this->port, sf::Joystick::Z);
             return (thrust+=100)/200; //thrust values from the trigger range [-100,100] because of how SFML is designed... need to be from [0,200] then [0,100]
         default:
             std::cout << "Error: thrust" << std::endl;
@@ -86,7 +89,7 @@ float Controller::getPitch(){
         case 4:
         case 5:
         case 8:
-            pitch = sf::Joystick::getAxisPosition(0, sf::Joystick::Y);
+            pitch = sf::Joystick::getAxisPosition(this->port, sf::Joystick::Y);
             if(pitch<20 && pitch>-20) return 0;
             else return pitch/100;
         case 2:
@@ -94,7 +97,7 @@ float Controller::getPitch(){
         case 6:
         case 7:
         case 9:
-            pitch = sf::Joystick::getAxisPosition(0, sf::Joystick::V);
+            pitch = sf::Joystick::getAxisPosition(this->port, sf::Joystick::V);
             if(pitch<20 && pitch>-20) return 0;
             else return pitch/100;
         default:
@@ -112,7 +115,7 @@ float Controller::getRoll(){
         case 4:
         case 5:
         case 8:
-            roll = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
+            roll = sf::Joystick::getAxisPosition(this->port, sf::Joystick::X);
             if(roll<20 && roll>-20) return 0;
             else return roll/100;
         case 2:
@@ -120,7 +123,7 @@ float Controller::getRoll(){
         case 6:
         case 7:
         case 9:
-            roll = sf::Joystick::getAxisPosition(0, sf::Joystick::U);
+            roll = sf::Joystick::getAxisPosition(this->port, sf::Joystick::U);
             if(roll<20 && roll>-20) return 0;
             else return roll/100;
         default:
@@ -140,7 +143,7 @@ float Controller::getYaw(){
         case 4:
         case 7:
         case 8:
-            yaw = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
+            yaw = sf::Joystick::getAxisPosition(this->port, sf::Joystick::X);
             if(yaw<20 && yaw>-20) return 0;
             else return yaw/100;
         case 1:
@@ -148,7 +151,7 @@ float Controller::getYaw(){
         case 5:
         case 6:
         case 9:
-            yaw = sf::Joystick::getAxisPosition(0, sf::Joystick::U);
+            yaw = sf::Joystick::getAxisPosition(this->port, sf::Joystick::U);
             if(yaw<20 && yaw>-20) return 0;
             else return yaw/100;
         default:
@@ -172,4 +175,16 @@ float Controller::getAileron(){
 
 float Controller::getRudder(){
     return this->getYaw();
+}
+
+float Controller::toggleLeftHandMode(){
+    if(sf::Joystick::getAxisPosition(this->port, sf::Joystick::PovX)==-1){
+        this->setMode(8);
+    }
+}
+
+float Controller::toggleRightHandMode(){
+    if(sf::Joystick::getAxisPosition(this->port, sf::Joystick::PovX)==1){
+        this->setMode(9);
+    }
 }

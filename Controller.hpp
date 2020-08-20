@@ -21,6 +21,9 @@ class Controller{
         float getAileron();
         float getRudder();
 
+        float toggleLeftHandMode();
+        float toggleRightHandMode();
+
     private:
         unsigned int port;
         unsigned int mode;

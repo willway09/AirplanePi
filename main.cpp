@@ -9,9 +9,13 @@
 #include "Controller.hpp"
 
 int main(){
-    Controller xbox(4,0);
+    unsigned int input_mode;
+    std::cin >> input_mode;
+    Controller xbox(input_mode,0);
     float timeOut = 0.1;
     while(true){
+        xbox.toggleLeftHandMode();
+        xbox.toggleRightHandMode();
         std::cout << "Thrust: " << std::setw(9) << xbox.getThrust() << " ";
         std::cout << "Pitch: " << std::setw(9) << xbox.getPitch() << " ";
         std::cout << "Roll: " << std::setw(9) << xbox.getRoll() << " ";
