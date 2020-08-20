@@ -230,6 +230,12 @@ float Controller::toggleCruiseControll(){
     }
 }
 
+void Controller::listenForToggles(){
+    this->toggleLeftHandMode();
+    this->toggleRightHandMode();
+    this->toggleCruiseControll();
+}
+
 float Controller::listButtons(){
     std::cout << "";
     for(int x=0;x<32;x++){

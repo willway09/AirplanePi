@@ -21,10 +21,12 @@ class Controller{
         float getAileron();
         float getRudder();
 
-        float toggleLeftHandMode();
-        float toggleRightHandMode();
-        
-        float toggleCruiseControll();
+        void listenForToggles(); //calls all toggle methods so server always only calls one method 
+
+            float toggleLeftHandMode();
+            float toggleRightHandMode();
+            
+            float toggleCruiseControll();
 
         float listButtons();
 

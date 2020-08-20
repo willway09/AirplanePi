@@ -7,15 +7,12 @@
 		<script>
 
 		function main() {
-			console.log("Running");
 			//Create XML HTTP Request for interacting with REST interface
 			let xhttp = new XMLHttpRequest();
 
 			//When the XML document loads
 			xhttp.onreadystatechange = function() {
-				console.log("Main ran");
 				if(this.readyState == 4 && this.status == 200) {
-					console.log("Passed if");
 
 					let xmlDoc = this.responseXML;
 
@@ -49,6 +46,13 @@
 
 		window.onload = main; //When the main page loads, ensure that the main functino is called
 
+		function changeMode(newMode){
+			let xhttp = new XMLHttpRequest();
+			let url = "/state.xml?mode="+newMode;
+			xhttp.open("GET", url, true);
+			xhttp.send();
+		}
+
 		</script>
 	</head>
 
@@ -59,6 +63,19 @@
 		<p>Pitch: <span id="pitchValue"></span></p>
 		<p>Roll: <span id="rollValue"></span></p>
 		<p>Yaw: <span id="yawValue"></span></p>
+
+		<br>
+		
+		<button type="button" onclick="changeMode(0)">Controller Mode 0</button>
+		<button type="button" onclick="changeMode(1)">Controller Mode 1</button>
+		<button type="button" onclick="changeMode(2)">Controller Mode 2</button>
+		<button type="button" onclick="changeMode(3)">Controller Mode 3</button>
+		<button type="button" onclick="changeMode(4)">Controller Mode 4</button>
+		<button type="button" onclick="changeMode(5)">Controller Mode 5</button>
+		<button type="button" onclick="changeMode(6)">Controller Mode 6</button>
+		<button type="button" onclick="changeMode(7)">Controller Mode 7</button>
+		<button type="button" onclick="changeMode(8)">Controller Mode 8</button>
+		<button type="button" onclick="changeMode(9)">Controller Mode 9</button>
 
 	</body>
 

@@ -101,12 +101,18 @@ std::string statePage(std::unordered_map<std::string, std::string>& params, void
 	//Convert void data pointer to appropriate PwmValues pointer
 	struct Axes* axes = ((struct ValuesContainer*) data)->axes;
 
-	/*int localThrust = -1;
-	if(isNumber(params["thrust"]))
-		localThrust = std::stoi(params["thrust"]);*/
-
+	int localMode = -1;
+	if(isNumber(params["mode"]))
+		localMode = std::stoi(params["mode"]);
+	
 	//Lock and unlock mutex briefly to update values
 	pthread_mutex_lock(&(axes->axesControlMutex));
+	
+		axes->controller->listenForToggles(); //listens for all toggle methods
+		
+		if(localMode != -1)
+			axes->controller->setMode(localMode);
+	
 		float localThrust = axes->thrust;
 		float localPitch = axes->pitch;
 		float localRoll = axes->roll;
