@@ -20,6 +20,7 @@ int main(){
         std::cout << "Pitch: " << std::setw(9) << xbox.getPitch() << " ";
         std::cout << "Roll: " << std::setw(9) << xbox.getRoll() << " ";
         std::cout << "Yaw: " << std::setw(9) << xbox.getYaw() << std::endl;
+        xbox.printPov();
         usleep(timeOut*1000000);
     }
 }

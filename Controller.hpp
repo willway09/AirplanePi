@@ -24,6 +24,8 @@ class Controller{
         float toggleLeftHandMode();
         float toggleRightHandMode();
 
+        float printPov();
+
     private:
         unsigned int port;
         unsigned int mode;
