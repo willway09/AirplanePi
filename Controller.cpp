@@ -190,5 +190,5 @@ float Controller::toggleRightHandMode(){
 }
 
 float Controller::printPov(){
-    std::cout << "PovX: " << sf::Joystick::PovX << "PovY: " << sf::Joystick::PovY << std::endl;
+    std::cout << "PovX: " << sf::Joystick::getAxisPosition(this->port, sf::Joystick::PovX) << " PovY: " << sf::Joystick::getAxisPosition(this->port, sf::Joystick::PovY) << std::endl;
 }
