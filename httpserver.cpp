@@ -19,7 +19,7 @@
 #include <fstream>
 
 //Controller headers
-#include <Controller.hpp>
+#include "Controller.hpp"
 
 //Structs for sharing groups of values between main() and threads
 struct Axes{
