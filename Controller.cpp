@@ -178,13 +178,13 @@ float Controller::getRudder(){
 }
 
 float Controller::toggleLeftHandMode(){
-    if(sf::Joystick::getAxisPosition(this->port, sf::Joystick::PovX)==-1){
+    if(sf::Joystick::getAxisPosition(this->port, sf::Joystick::PovX)==-100){
         this->setMode(8);
     }
 }
 
 float Controller::toggleRightHandMode(){
-    if(sf::Joystick::getAxisPosition(this->port, sf::Joystick::PovX)==1){
+    if(sf::Joystick::getAxisPosition(this->port, sf::Joystick::PovX)==100){
         this->setMode(9);
     }
 }
