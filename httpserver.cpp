@@ -219,7 +219,7 @@ int main() {
 
 	struct Axes axes;
 		Controller controller(0,0);
-		axes->controller = &controller;
+		axes.controller = &controller;
 	struct ValuesContainer valuesContainer = { &axes };
 
 	//Create thread for controller reading
