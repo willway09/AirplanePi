@@ -13,7 +13,9 @@
 
 			//When the XML document loads
 			xhttp.onreadystatechange = function() {
+				console.log("Main ran");
 				if(this.readyState == 4 && this.status == 200) {
+					console.log("Passed if");
 
 					let xmlDoc = this.responseXML;
 
