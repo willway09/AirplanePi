@@ -35,11 +35,14 @@ void* updateController(void* data){
 	Axes* axes = (Axes*)data;
 	while(true){
 		pthread_mutex_lock(&(axes->axesControlMutex));
-		axes->thrust = (axes->controller)->getThrust();
-		axes->pitch = (axes->controller)->getPitch();
-		axes->roll = (axes->controller)->getRoll();
-		axes->yaw = (axes->controller)->getYaw();
+			axes->thrust = (axes->controller)->getThrust();
+			axes->pitch = (axes->controller)->getPitch();
+			axes->roll = (axes->controller)->getRoll();
+			axes->yaw = (axes->controller)->getYaw();
 		pthread_mutex_unlock(&(axes->axesControlMutex));
+		
+		//std::cout << axes->thrust << axes->pitch << axes->roll << axes-> yaw << std::endl;
+		
 		usleep(1000);
 	}
 }
@@ -98,43 +101,16 @@ std::string statePage(std::unordered_map<std::string, std::string>& params, void
 	//Convert void data pointer to appropriate PwmValues pointer
 	struct Axes* axes = ((struct ValuesContainer*) data)->axes;
 
-	int localThrust = -1;
+	/*int localThrust = -1;
 	if(isNumber(params["thrust"]))
-		localThrust = std::stoi(params["thrust"]);
+		localThrust = std::stoi(params["thrust"]);*/
 
-	int localPitch = -1;
-	if(isNumber(params["pitch"]))
-		localPitch = std::stoi(params["pitch"]);
-
-	int localRoll = -1;
-	if(isNumber(params["roll"]))
-		localRoll = std::stoi(params["roll"]);
-
-	int localYaw = -1;
-	if(isNumber(params["yaw"]))
-		localYaw = std::stoi(params["yaw"]);
-
-
-	//Lock mutex briefly to update values
+	//Lock and unlock mutex briefly to update values
 	pthread_mutex_lock(&(axes->axesControlMutex));
-
-		if(localThrust != -1)
-			axes->thrust = localThrust;
-		localThrust = axes->thrust;
-
-		if(localThrust != -1)
-			axes->pitch = localPitch;
-		localPitch = axes->pitch;
-
-		if(localRoll != -1)
-			axes->roll = localRoll;
-		localRoll = axes->roll;
-
-		if(localYaw != -1)
-			axes->yaw = localYaw;
-		localYaw = axes->yaw;
-
-	//Unlock mutex
+		float localThrust = axes->thrust;
+		float localPitch = axes->pitch;
+		float localRoll = axes->roll;
+		float localYaw = axes->yaw;
 	pthread_mutex_unlock(&(axes->axesControlMutex));
 
 	std::ostringstream responseContent;

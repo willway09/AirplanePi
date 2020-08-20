@@ -40,6 +40,9 @@
 			//Declare variable to count the number of parameters which need to be sent
 			let varCount = 0;
 
+			xhttp.open("GET", url, true);
+			xhttp.send();
+
 			setTimeout(main, 300); //Call the main function again in 300 milliseconds, so that updates feel continuous
 		}
 

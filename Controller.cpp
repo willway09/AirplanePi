@@ -11,7 +11,7 @@ Controller::Controller(unsigned int mode, unsigned int port){
     this->setPort(port);
 
     sf::Joystick::update();
-    if(sf::Joystick::isConnected(port)) std::cout << "Connection succeeded" << std::endl;
+    if(sf::Joystick::isConnected(port)) std::cout << "Controller (Port #" << port << " Mode #" << mode << ") connected" <<std::endl;
     else std::cout << "Connection failed you silly" << std::endl;
 }
 
