@@ -49,35 +49,41 @@ bool Controller::getButton(std::string buttonString){
 }
 
 float Controller::getThrust(){
-    float thrust = 0;
-    sf::Joystick::update();
-    switch(mode){
-        case 0:
-        case 1:
-            thrust = sf::Joystick::getAxisPosition(this->port, sf::Joystick::V);
-            thrust-=(2*thrust); //thrust values need to be reversed because of how SFML is designed
-            if(thrust<20) return 0; //cannot have negative thrust
-            else return thrust/100;
-        case 2:
-        case 3:
-            thrust = sf::Joystick::getAxisPosition(this->port, sf::Joystick::Y);
-            thrust-=(2*thrust); //thrust values need to be reversed because of how SFML is designed
-            if(thrust<20) return 0; //cannot have negative thrust
-            else return thrust/100;
-        case 4:
-        case 5:
-        case 9:
-            thrust = sf::Joystick::getAxisPosition(this->port, sf::Joystick::R);
-            return (thrust+=100)/200; //thrust values from the trigger range [-100,100] because of how SFML is designed... need to be from [0,200] then [0,100]
-        case 6:
-        case 7:
-        case 8:
-            thrust = sf::Joystick::getAxisPosition(this->port, sf::Joystick::Z);
-            return (thrust+=100)/200; //thrust values from the trigger range [-100,100] because of how SFML is designed... need to be from [0,200] then [0,100]
-        default:
-            std::cout << "Error: thrust" << std::endl;
-            return 0;
+    if(cruiseControl){
+        return this->cruiseControlThrust;
     }
+    else{
+        float thrust  = 0;
+        sf::Joystick::update();
+        switch(mode){
+            case 0:
+            case 1:
+                thrust = sf::Joystick::getAxisPosition(this->port, sf::Joystick::V);
+                thrust-=(2*thrust); //thrust values need to be reversed because of how SFML is designed
+                if(thrust<20) return 0; //cannot have negative thrust
+                else return thrust/100;
+            case 2:
+            case 3:
+                thrust = sf::Joystick::getAxisPosition(this->port, sf::Joystick::Y);
+                thrust-=(2*thrust); //thrust values need to be reversed because of how SFML is designed
+                if(thrust<20) return 0; //cannot have negative thrust
+                else return thrust/100;
+            case 4:
+            case 5:
+            case 9:
+                thrust = sf::Joystick::getAxisPosition(this->port, sf::Joystick::R);
+                return (thrust+=100)/200; //thrust values from the trigger range [-100,100] because of how SFML is designed... need to be from [0,200] then [0,100]
+            case 6:
+            case 7:
+            case 8:
+                thrust = sf::Joystick::getAxisPosition(this->port, sf::Joystick::Z);
+                return (thrust+=100)/200; //thrust values from the trigger range [-100,100] because of how SFML is designed... need to be from [0,200] then [0,100]
+            default:
+                std::cout << "Error: thrust" << std::endl;
+                return 0;
+        }
+    }
+    
 }
 
 float Controller::getPitch(){
@@ -178,17 +184,62 @@ float Controller::getRudder(){
 }
 
 float Controller::toggleLeftHandMode(){
+    sf::Joystick::update();
     if(sf::Joystick::getAxisPosition(this->port, sf::Joystick::PovX)==-100){
         this->setMode(8);
     }
 }
 
 float Controller::toggleRightHandMode(){
+    sf::Joystick::update();
     if(sf::Joystick::getAxisPosition(this->port, sf::Joystick::PovX)==100){
         this->setMode(9);
     }
 }
 
-float Controller::printPov(){
-    std::cout << "PovX: " << sf::Joystick::getAxisPosition(this->port, sf::Joystick::PovX) << " PovY: " << sf::Joystick::getAxisPosition(this->port, sf::Joystick::PovY) << std::endl;
+float Controller::toggleCruiseControll(){
+    float prevCruiseControlCounter = this->cruiseControlCounter;
+    sf::Joystick::update();
+    switch(mode){
+        case 0:
+        case 1:
+        case 4:
+        case 5:
+        case 8:
+            if(sf::Joystick::isButtonPressed(this->port,9)){
+                this->cruiseControlCounter++;
+            }
+            else{
+                this->cruiseControlCounter = 0;
+            }
+            break;
+        case 2:
+        case 3:
+        case 6:
+        case 7:
+        case 9:
+            if(sf::Joystick::isButtonPressed(this->port,10)){
+                this->cruiseControlCounter++;
+            }
+            else{
+                this->cruiseControlCounter = 0;
+            }
+            break;
+    }
+    if(cruiseControlCounter==0 && prevCruiseControlCounter>0){
+        std::cout << "cruise control toggled" << std::endl;
+        this->cruiseControlThrust = this->getThrust();
+        cruiseControl = !cruiseControl;
+    }
+}
+
+float Controller::listButtons(){
+    std::cout << "";
+    for(int x=0;x<32;x++){
+        sf::Joystick::update();
+        if(sf::Joystick::isButtonPressed(0,x)){
+            std::cout << buttonName[x] << " ";
+        }
+    }
+    std::cout << std::endl;
 }

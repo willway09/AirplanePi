@@ -23,11 +23,18 @@ class Controller{
 
         float toggleLeftHandMode();
         float toggleRightHandMode();
+        
+        float toggleCruiseControll();
 
-        float printPov();
+        float listButtons();
 
     private:
         unsigned int port;
         unsigned int mode;
+        
+        bool cruiseControl = false;
+        float cruiseControlThrust;
+        unsigned int cruiseControlCounter = 0;
+        
         static const std::string buttonName[11];
 };
