@@ -35,10 +35,10 @@ void* updateController(void* data){
 	Axes* axes = (Axes*)data;
 	while(true){
 		pthread_mutex_lock(&(axes->axesControlMutex));
-		axes->thrust = axes->controller.getThrust();
-		axes->pitch = axes->controller.getPitch();
-		axes->roll = axes->controller.getRoll();
-		axes->yaw = axes->controller.getYaw();
+		axes->thrust = (axes->controller).getThrust();
+		axes->pitch = (axes->controller).getPitch();
+		axes->roll = (axes->controller).getRoll();
+		axes->yaw = (axes->controller).getYaw();
 		pthread_mutex_unlock(&(axes->axesControlMutex));
 		usleep(1000);
 	}
