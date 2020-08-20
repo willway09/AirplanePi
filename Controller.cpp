@@ -190,5 +190,5 @@ float Controller::toggleRightHandMode(){
 }
 
 float Controller::printPov(){
-    std::cout << "PovX: " << sf::Joystick::PovX << "PovY: " sf::Joystick::PovY << std::endl;
+    std::cout << "PovX: " << sf::Joystick::PovX << "PovY: " << sf::Joystick::PovY << std::endl;
 }
