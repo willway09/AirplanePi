@@ -18,10 +18,20 @@
 #include <unordered_map>
 #include <fstream>
 
+//Radio headers
+#include "RF24.h"
+
 //Controller headers
-#include "Controller.hpp"
+#include "PhysicalController.hpp"
+#include "WebController.hpp"
 
 //Structs for sharing groups of values between main() and threads
+
+
+long map(long x, long in_min, long in_max, long out_min, long out_max) {
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
 struct Axes{
 	Controller* controller = nullptr;
 	float thrust = 0;
@@ -29,6 +39,20 @@ struct Axes{
 	float roll = 0;
 	float yaw = 0;
 	pthread_mutex_t axesControlMutex = PTHREAD_MUTEX_INITIALIZER;
+};
+
+struct Location{
+	float lat = 0;
+	float log = 0;
+	float elv = 0;
+	pthread_mutex_t locationControlMutex = PTHREAD_MUTEX_INITIALIZER;
+};
+
+struct HomeBase{
+	float lat = 0;
+	float log = 0;
+	float elv = 0;
+	pthread_mutex_t homeBaseControlMutex = PTHREAD_MUTEX_INITIALIZER;
 };
 
 void* updateController(void* data){
@@ -41,14 +65,103 @@ void* updateController(void* data){
 			axes->yaw = (axes->controller)->getYaw();
 		pthread_mutex_unlock(&(axes->axesControlMutex));
 		
-		//std::cout << axes->thrust << axes->pitch << axes->roll << axes-> yaw << std::endl;
+		//std::cout << axes->thrust << " " << axes->pitch << " " << axes->roll << " " << axes-> yaw << std::endl;
 		
 		usleep(1000);
 	}
 }
 
+void* radio(void* data) {
+	Axes* axes = (Axes*)data;
+	
+	 RF24 radio(22, 0);
+    
+    radio.begin();
+    
+    radio.setChannel(100);
+
+    std::cout << radio.isChipConnected() << std::endl;
+    radio.printDetails();    
+    std::cout << (int)radio.getChannel() << std::endl;
+
+//const uint8_t address[6] = "00001";
+    const uint8_t address[6] = {'0', '0', '0', '0', '1', '\0' };
+    
+    
+    radio.openWritingPipe(address);
+    radio.setPALevel(RF24_PA_MAX);
+    radio.stopListening();
+    radio.setAutoAck(true);
+    
+    uint8_t text[6];
+    
+    int count = 0;
+    
+    float localThrust, localPitch, localRoll, localYaw;
+    uint8_t thrustServo, leftAileron, rightAileron, leftElevator, rightElevator, rudder;
+    
+    int successes = 0;
+    int successCount = 0;
+    
+    while(true) {
+    	
+    	pthread_mutex_lock(&(axes->axesControlMutex));
+			localThrust = axes->thrust;
+			localPitch = axes->pitch;
+			localRoll = axes->roll;
+			localYaw = axes->yaw;
+		pthread_mutex_unlock(&(axes->axesControlMutex));
+        
+       
+    	text[0] = (uint8_t)map((int)(localThrust*100), 0, 100, 0, 255);
+    	text[1] = (uint8_t)map((int)(localRoll*100), -100, 100, 255, 0);
+    	text[2] = (uint8_t)map((int)(localRoll*100), -100, 100, 0, 255);
+    	text[3] = (uint8_t)map((int)(localPitch*100), -100, 100, 0, 255);
+    	text[4] = text[3];
+    	text[5] = (uint8_t)map((int)(localYaw*100), -100, 100, 101, 153);
+    	
+    	//std::cout << (int)text[5] << std::endl;
+        
+        radio.stopListening();
+        bool ok = radio.write(text, sizeof(text));
+    
+        //std::cout << "Writing " << count << " " << ok << std::endl;
+        
+        for(int i = 0; i < 6; i++) {
+        	//std::cout << (int)text[i] << " ";
+        }
+        //std::cout << std::endl;
+        
+        //if(!ok)
+            //std::cout << "Failed" << std::endl;
+        
+        if(ok) successes++;
+        successCount++;
+        
+        if(successCount == 100) {
+        	std::cout << "Success ratio  (per last 100): " << (double)successes / successCount << '\t';
+        	
+        	for(int i = 0; i < 6; i++) {
+        		std::cout << " " << (int)text[i];
+        	}
+        	
+        	std::cout << std::endl;
+        	
+        	successCount = 0;
+        	successes = 0;
+        }
+        
+        //std::cout << successCount << std::endl;
+        
+        usleep(100);
+        count++;
+    }
+}
+
 struct ValuesContainer{
 	struct Axes* axes;
+	struct Location* location;
+	struct HomeBase* homeBase;
 };
 
 std::string mainPage() { //Return the main web page, for user interfacing
@@ -85,7 +198,7 @@ std::string mainPage() { //Return the main web page, for user interfacing
 //Basic method for determining if string is a positive integer
 bool isNumber(std::string& value) {
 	for(char c : value) {
-		if(!std::isdigit(c)) { //If not digit, return false
+		if(!std::isdigit(c) && c !='-') { //If not digit, return false
 			return false;
 		}
 	}
@@ -98,26 +211,56 @@ bool isNumber(std::string& value) {
 //containing the state of the PWM signal
 std::string statePage(std::unordered_map<std::string, std::string>& params, void* data) {
 
+	std::cout << "Start" << std::endl;
+
 	//Convert void data pointer to appropriate PwmValues pointer
 	struct Axes* axes = ((struct ValuesContainer*) data)->axes;
+	//struct Location location = ((struct ValuesContainer) data)->location;
+	//struct HomeBase homeBase = ((struct ValuesContainer) data)->homeBase;
 
 	int localMode = -1;
 	if(isNumber(params["mode"]))
 		localMode = std::stoi(params["mode"]);
+		
+	int localSignal = -101;
+	if(isNumber(params["signal"]))
+		localSignal = std::stoi(params["signal"]);
+		
+	std::cout << "Local signal: " << localSignal << std::endl;
 	
 	//Lock and unlock mutex briefly to update values
 	pthread_mutex_lock(&(axes->axesControlMutex));
 	
-		axes->controller->listenForToggles(); //listens for all toggle methods
+		axes->controller->update(); //listens for all toggle methods
 		
-		if(localMode != -1)
-			axes->controller->setMode(localMode);
+		if(localMode != -1 && axes->controller->getType() == Controller::PHYSICAL) {
+			((PhysicalController*)(axes->controller))->setMode(localMode);
+			
+		}
+		
+		
+		if(localSignal != -101)
+			axes->roll = localSignal / 100.0f;
+			
+		
 	
 		float localThrust = axes->thrust;
 		float localPitch = axes->pitch;
 		float localRoll = axes->roll;
 		float localYaw = axes->yaw;
 	pthread_mutex_unlock(&(axes->axesControlMutex));
+	
+	/*pthread_mutex_lock(&(location->locationControlMutex));
+		float localLat = location->lat;
+		float localLog = location->log;
+		float localElv = location->elv;
+	pthread_mutex_unlock(&(location->locationControlMutex));
+	
+	pthread_mutex_lock(&(homeBase->homeBaseControlMutex));
+		float localHomeLat = homeBase->lat;
+		float localHomeLog = homeBase->log;
+		float localHomeElv = homeBase->elv;
+	pthread_mutex_unlock(&(homeBase->homeBastControlMutex));*/
 
 	std::ostringstream responseContent;
 	responseContent.precision(2);
@@ -127,34 +270,81 @@ std::string statePage(std::unordered_map<std::string, std::string>& params, void
 	responseContent << "\n";
 
 	responseContent << "<data>";
+	responseContent << "\n";
+
+		responseContent << "<axes>";
 		responseContent << "\n";
 
-		//Generate percent response XML
-		responseContent << "<thrust>";
-		responseContent << std::fixed << localThrust;
-		responseContent << "</thrust>";
+				/*responseContent << "<thrust>";
+				responseContent << std::fixed << localThrust;
+				responseContent << "</thrust>";
+				responseContent << "\n";
+		
+				responseContent << "<pitch>";
+				responseContent << std::fixed << localPitch;
+				responseContent << "</pitch>";
+				responseContent << "\n";
+		
+				responseContent << "<roll>";
+				responseContent << std::fixed << localRoll;
+				responseContent << "</roll>";
+				responseContent << "\n";
+		
+				responseContent << "<yaw>";
+				responseContent << std::fixed << localYaw;
+				responseContent << "</yaw>";
+				responseContent << "\n";*/
+		
+				responseContent << std::defaultfloat;
+		
+		responseContent << "</axes>";
 		responseContent << "\n";
-
-		//Generate frequency response XML
-		responseContent << "<pitch>";
-		responseContent << std::fixed << localPitch;
-		responseContent << "</pitch>";
+		
+		responseContent << "<location>";
 		responseContent << "\n";
-
-		//Generate temperature response XML
-
-		responseContent << "<roll>";
-		responseContent << std::fixed << localRoll;
-		responseContent << "</roll>";
+				
+				/*responseContent << "<lat>";
+				responseContent << std::fixed << localLat;
+				responseContent << "</lat>";
+				responseContent << "\n";
+				
+				responseContent << "<log>";
+				responseContent << std::fixed << localLog;
+				responseContent << "</log>";
+				responseContent << "\n";
+				
+				responseContent << "<elv>";
+				responseContent << std::fixed << localElv;
+				responseContent << "</elv>";
+				responseContent << "\n";*/
+				
+				responseContent << std::defaultfloat;
+		
+		responseContent << "</location>";
 		responseContent << "\n";
-
-		//Generate humidity response XML
-		responseContent << "<yaw>";
-		responseContent << std::fixed << localYaw;
-		responseContent << "</yaw>";
+		
+		responseContent << "<homeBase>";
 		responseContent << "\n";
-
-		responseContent << std::defaultfloat;
+				
+				/*responseContent << "<lat>";
+				responseContent << std::fixed << localHomeLat;
+				responseContent << "</lat>";
+				responseContent << "\n";
+				
+				responseContent << "<log>";
+				responseContent << std::fixed << localHomeLog;
+				responseContent << "</log>";
+				responseContent << "\n";
+				
+				responseContent << "<elv>";
+				responseContent << std::fixed << localHomeElv;
+				responseContent << "</elv>";
+				responseContent << "\n";*/
+				
+				responseContent << std::defaultfloat;
+		
+		responseContent << "</homeBase>";
+		responseContent << "\n";
 
 	responseContent << "</data>";
 
@@ -164,8 +354,98 @@ std::string statePage(std::unordered_map<std::string, std::string>& params, void
 	response += "Connection: Closed\r\n";
 	response += "\r\n";
 	response += responseContent.str();
+	std::cout << "End"<< std::endl;
 
 
+	return response;
+}
+
+std::string controllerPage() { //Return the main web page, for user interfacing
+
+	std::ifstream indexFile("controller.html"); //Open index.html, which is the main GUI webpage file
+	
+	std::string responseContent(""); //Declare responseContent, which is the non-header component of the response
+
+	if(indexFile.is_open()) { //If the file opened successfully
+
+		while(!(indexFile.eof())) { //Copy file into responseContent string
+			std::string append;
+			std::getline(indexFile, append);
+			responseContent += append + "\n";
+		}
+
+		indexFile.close();
+		
+	} else { //Else send error message
+		responseContent += "<b>Could not open controller.html</b>";
+	}
+	
+
+	//Create HTTP response
+	std::string response = "HTTP/1.1 200 OK\r\n";
+	response += "Content-Length: " + std::to_string(responseContent.length()) + "\r\n";
+	response += "\r\n";
+	response += responseContent;
+
+	return response;
+
+}
+
+
+std::string controllerStatePage(std::unordered_map<std::string, std::string>& params, void* data) {
+	
+	Axes* axes = ((ValuesContainer*)(data))->axes;
+	
+	if(axes->controller->getType() == Controller::WEB) {
+		
+		
+		
+		WebController* controller = (WebController*)(axes->controller);
+		
+		int localThrust = -1, localPitch = -101, localRoll = -101, localYaw = -101;
+		
+		if(isNumber(params["thrust"]))
+			localThrust = std::stoi(params["thrust"]);
+			
+		if(isNumber(params["pitch"]))
+			localPitch = std::stoi(params["pitch"]);
+			
+		if(isNumber(params["roll"]))
+			localRoll = std::stoi(params["roll"]);
+			
+		if(isNumber(params["yaw"]))
+			localYaw = std::stoi(params["yaw"]);
+			
+			
+		pthread_mutex_lock(&(axes->axesControlMutex));
+			if(localThrust != -1)
+				controller->setThrust(localThrust / 100.0f);
+			
+			
+			if(localPitch != -101)
+				controller->setPitch(localPitch / 100.0f);
+				
+			if(localRoll != -101)
+				controller->setRoll(localRoll / 100.0f);
+				
+			if(localYaw != -101)
+				controller->setYaw(localYaw / 100.0f);
+			
+			
+		pthread_mutex_unlock(&(axes->axesControlMutex));	
+		
+		
+	}
+	
+	std::string responseContent = "All good";
+	
+	std::string response = "HTTP/1.1 200 OK\r\n";
+	response += "Content-Length: " + std::to_string(responseContent.length()) + "\r\n";
+	response += "Content-Type: text/xml\r\n";
+	response += "Connection: Closed\r\n";
+	response += "\r\n";
+	response += responseContent;
+	
 	return response;
 }
 
@@ -185,12 +465,18 @@ std::string evaluateRequest(std::string file, std::unordered_map<std::string, st
 	//Currently, only root page and state.xml are valid
 	//If file does not match any listings, return a basic HTTP 404 error page
 
+	//std::cout << "maybe" << std::endl;
+
 	if(file.compare("/") == 0) {
 		return mainPage();
 	} else if(file.compare("/state.xml") == 0) {
 		return statePage(params, data);
 	} else if(file.compare("/index.html") == 0) { //Redundancy for more intuitive access
 		return mainPage();
+	} else if(file.compare("/controller.html") == 0) {
+		return controllerPage();
+	} else if(file.compare("/controllerState.xml") == 0) {
+		return controllerStatePage(params, data);
 	} else {
 		return errorPage();
 	}
@@ -200,13 +486,17 @@ std::string evaluateRequest(std::string file, std::unordered_map<std::string, st
 int main() {
 
 	struct Axes axes;
-		Controller controller(0,0);
-		axes.controller = &controller;
+		PhysicalController controller(0,8);
+		//WebController controller;
+		axes.controller = (Controller*)&controller;
 	struct ValuesContainer valuesContainer = { &axes };
 
 	//Create thread for controller reading
 	pthread_t controllerTid;
 	pthread_create(&controllerTid, NULL, updateController, &axes);
+	
+	pthread_t radioTid;
+	pthread_create(&radioTid, NULL, radio, &axes);
 
 	//Declare variables for sockets
 	unsigned int s;

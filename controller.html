@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<script>
+		
+		function main() {
+			//Create XML HTTP Request for interacting with REST interface
+				let xhttp = new XMLHttpRequest();
+	
+				//When the XML document loads
+				xhttp.onreadystatechange = function() {
+					if(this.readyState == 4 && this.status == 200) {
+	
+						/*let xmlDoc = this.responseXML;
+	
+						let x = xmlDoc.getElementsByTagName("thrust");
+						/*document.getElementById("thrustValue").innerHTML = x[0].childNodes[0].nodeValue;
+	
+						x = xmlDoc.getElementsByTagName("pitch");
+						document.getElementById("pitchValue").innerHTML = x[0].childNodes[0].nodeValue;
+	
+						x = xmlDoc.getElementsByTagName("roll");
+						document.getElementById("rollValue").innerHTML = x[0].childNodes[0].nodeValue;
+	
+						x = xmlDoc.getElementsByTagName("yaw");
+						document.getElementById("yawValue").innerHTML = x[0].childNodes[0].nodeValue;*/
+	
+					}
+	
+				}
+	
+				//Declare url and target it at the state.xml, the file which deals with the REST interface
+				let url = "/controllerState.xml";
+				//Declare variable to count the number of parameters which need to be sent
+				
+				
+				url += "?"
+				
+				
+
+
+				url += "thrust=";
+
+				if(document.getElementById("thrustCheck").checked == true) {
+					url += 100;
+				} else {
+					 url += document.getElementById("thrustSlider").value;
+				}
+				url += "&";
+				
+				url += "pitch=" + document.getElementById("pitchSlider").value;
+				url += "&";
+				
+				url += "roll=" + document.getElementById("rollSlider").value;
+				url += "&";
+				
+				url += "yaw=" + document.getElementById("yawSlider").value;
+				
+				
+				
+				let varCount = 0;
+				
+				console.log(url);
+	
+				xhttp.open("GET", url, true);
+				xhttp.send();
+	
+				setTimeout(main, 30); //Call the main function again in 300 milliseconds, so that updates feel continuous
+				
+		}
+		
+		window.onload = main;
+		</script>
+
+		<style>
+			#thrustCheck {
+				width: 100px;
+				height: 100px;
+			}
+		</style>
+			
+	</head>
+
+	<body>
+		<h1>Controller</h1>
+		
+		<label for="thrustSlider">Thrust: </label><span id="thrustSpan"></span><br>
+		<input type="range" min="0" max="23" value="0" id="thrustSlider" name="thrustSlider"><br>
+		<input type="checkbox" id="thrustCheck"><br>		
+
+
+		<label for="pitchSlider">Pitch: </label><span id="pitchSpan"></span><br>
+		<input type="range" min="-100" max="100" value="0" id="pitchSlider" name="pitchSlider"><br>
+		
+		<label for="rollSlider">Roll: </label><span id="rollSpan"></span><br>
+		<input type="range" min="-100" max="100" value="0" id="rollSlider" name="rollSlider"><br>
+		
+		<label for="yawSlider">Yaw: </label><span id="yawSpan"></span><br>
+		<input type="range" min="-100" max="100" value="0" id="yawSlider" name="yawSlider"><br>
+		
+		
+		
+		
+	</body>
+</html>
